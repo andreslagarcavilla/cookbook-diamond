@@ -1,22 +1,21 @@
-attribute :cookbook, :kind_of => String, :default => "diamond"
-attribute :options, :kind_of => Hash
-attribute :diamond_installation_path, :kind_of => String, :default => "/usr"
-attribute :diamond_configuration_path, :kind_of => String, :default => "/etc/diamond"
-attribute :diamond_configuration_source, :kind_of => String, :default => "diamond.conf.erb"
-attribute :diamond_handlers, :kind_of => Array, :default => ["diamond.handler.graphitepickle.GraphitePickleHandler"]
-attribute :diamond_user, :kind_of => String
-attribute :diamond_group, :kind_of => String
-attribute :diamond_pidfile, :kind_of => String, :default => "/var/run/diamond.pid"
-attribute :collectors_config_path, :kind_of => String, :default => "/etc/diamond/collectors/"
-attribute :diamond_collectors_path, :kind_of => String, :default => "/usr/share/diamond/collectors/"
-attribute :collectors_reload_interval, :kind_of => Fixnum, :default => 3600
-attribute :archive_handler, :kind_of => Hash, :default => {  "log_file" => "/var/log/diamond/diamond.log", "days" => 7 }
-attribute :graphite_handler, :kind_of => Hash, :default => { "host" => "localhost", "port" => 2003, "batch" => 256, "timeout" => 15 }
-attribute :graphite_picklehandler, :kind_of => Hash, :default => { "host" => "localhost", "port" => 2004, "batch" => 256, "timeout" => 15 }
-attribute :statsdhandler, :kind_of => Hash, :default => { "host" => "127.0.0.1", "port" => 8125 }
-attribute :tsdbhandler, :kind_of => Hash, :default => { "host" => "127.0.0.1", "port" => 4242, "timeout" => 15 }
-attribute :mysqlhandler, :kind_of => Hash, :default => { "host" => "127.0.0.1", "port" => 3306, "username" => String.new, "password" => String.new, "database" => "diamond", "table" => "metrics", "col_time" => "timestamp", "col_metric" => "metric", "col_value" => "value" }
-attribute :collectors, :kind_of => Hash, :default => { "hostname_method" => "fqdn_short", "hostname" => String.new, "path_prefix" => String.new, "path_suffix" => String.new, "interval" => 300 }
+default['diamond']['cookbook'] = "diamond"
+default['diamond']['diamond_installation_path'] = "/usr"
+default['diamond']['diamond_configuration_path'] = "/etc/diamond"
+default['diamond']['diamond_configuration_source'] = "diamond.conf.erb"
+default['diamond']['diamond_handlers'] = ["diamond.handler.archive.ArchiveHandler", "diamond.handler.graphitepickle.GraphitePickleHandler"]
+default['diamond']['diamond_user'] = String.new
+default['diamond']['diamond_group'] = String.new
+default['diamond']['diamond_pidfile'] = "/var/run/diamond.pid"
+default['diamond']['collectors_config_path'] = "/etc/diamond/collectors/"
+default['diamond']['diamond_collectors_path'] = "/usr/share/diamond/collectors/"
+default['diamond']['collectors_reload_interval'] = 3600
+default['diamond']['archive_handler'] = {  "log_file" => "/var/log/diamond/diamond.log", "days" => 7 }
+default['diamond']['graphite_handler'] = { "host" => "127.0.0.1", "port" => 2003, "batch" => 256, "timeout" => 15 }
+default['diamond']['graphite_picklehandler'] = { "host" => "127.0.0.1", "port" => 2004, "batch" => 256, "timeout" => 15 }
+default['diamond']['statsdhandler'] = { "host" => "127.0.0.1", "port" => 8125 }
+default['diamond']['tsdbhandler'] = { "host" => "127.0.0.1", "port" => 4242, "timeout" => 15 }
+default['diamond']['mysqlhandler'] = { "host" => "127.0.0.1", "port" => 3306, "username" => String.new, "password" => String.new, "database" => "diamond", "table" => "metrics", "col_time" => "timestamp", "col_metric" => "metric", "col_value" => "value" }
+default['diamond']['collectors'] = { "hostname_method" => "fqdn_short", "hostname" => String.new, "path_prefix" => String.new, "path_suffix" => String.new, "interval" => 300 }
 
 case node[:platform]
   when "ubuntu","debian"
