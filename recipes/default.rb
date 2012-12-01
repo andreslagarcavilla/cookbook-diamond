@@ -11,7 +11,7 @@ case node[:platform]
     end
 
     diamond_install node['hostname'] do
-        action :git
+        action :deb
         notifies :restart, resources(:service => "diamond")
     end
 

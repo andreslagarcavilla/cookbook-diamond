@@ -9,7 +9,7 @@ action :git do
     repository new_resource.git_repository_uri
     reference new_resource.git_reference
     action :checkout
-    not_if { ::File.exists?("/usr/bin/diamond") || ::File.exists?("/mnt/git/#{new_resource.name}/setup.py") }
+    not_if { ::File.exists?("/usr/local/bin/diamond") || ::File.exists?("/mnt/git/#{new_resource.name}/setup.py") }
   end
 
   new_resource.required_python_packages.collect do |pkg, ver|
@@ -19,25 +19,12 @@ action :git do
     end
   end
 
-#  execute "create version.txt" do
-#    cwd "/mnt/git/#{new_resource.name}"
-#    command "/bin/bash version.sh > version.txt"
-#    not_if { ::File.exists?("/usr/bin/diamond") }
-#  end
-
   execute "install diamond" do
     cwd "/mnt/git/#{new_resource.name}"
     command "python setup.py install"
-    creates "/usr/bin/diamond"
+    creates "/usr/local/bin/diamond"
   end
 
-  ["/var/log/diamond/","/usr/share/diamond","/usr/share/diamond/collectors"].each do |dp|
-    directory dp do
-      action :create
-      recursive true
-    end
-  end
-  
   directory "clean up temp git path" do
     path "/mnt/git/#{new_resource.name}"
     action :delete
@@ -65,24 +52,22 @@ action :deb do
   end
     
   execute "build diamond" do
+    not_if "dpkg -l | grep diamond"
     cwd "/mnt/git/#{new_resource.name}"
     command "make builddeb"
   end
 
-  ["/var/log/diamond/","/usr/share/diamond","/usr/share/diamond"].each do |dp|
-    directory dp do
-      action :create
-    end
-  end
-
   package "diamond" do
-    source "/mnt/git/#{new_resource.name}/build/diamond_3.0.2_all.deb"
+    not_if "dpkg -l | grep diamond"
+    source "/mnt/git/#{new_resource.name}/build/diamond_#{new_resource.diamond_version}_all.deb"
     provider Chef::Provider::Package::Dpkg
+    version new_resource.diamond_version
+    options "--force-confnew,confmiss"
     action :install
   end
 
   directory "clean up temp git path" do
-    path "/mnt/git/#{new_resource.name}"
+    path "/mnt/git"
     action :delete
     recursive true
   end

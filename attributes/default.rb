@@ -7,7 +7,7 @@ default['diamond']['diamond_user'] = String.new
 default['diamond']['diamond_group'] = String.new
 default['diamond']['diamond_pidfile'] = "/var/run/diamond.pid"
 default['diamond']['collectors_config_path'] = "/etc/diamond/collectors/"
-default['diamond']['diamond_collectors_path'] = "/usr/local/share/diamond/collectors/"
+default['diamond']['diamond_collectors_path'] = "#{node['diamond']['diamond_installation_path']}/share/diamond/collectors/"
 default['diamond']['collectors_reload_interval'] = 3600
 default['diamond']['archive_handler'] = { "log_file" => "/var/log/diamond/diamond.log", "days" => 7 }
 default['diamond']['graphite_handler'] = { "host" => "127.0.0.1", "port" => 2003, "batch" => 256, "timeout" => 15 }
@@ -19,7 +19,7 @@ default['diamond']['collectors'] = { "hostname_method" => "fqdn_short", "hostnam
 
 case node[:platform]
   when "ubuntu","debian"
-    default[:diamond][:version] = '3.0.2'
+    default[:diamond][:version] = '3.1.175'
   else
-    default[:diamond][:version] = '3.0.2-0'
+    default[:diamond][:version] = '3.1.175-0'
 end
