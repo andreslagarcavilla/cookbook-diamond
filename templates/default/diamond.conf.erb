@@ -7,7 +7,7 @@
 [server]
 
 # Handlers for published metrics.
-handlers = <%= @diamond_handlers.join(", ") %> 
+handlers = <%= @diamond_handlers %> 
 # User diamond will run as
 # Leave empty to use the current user
 user = <%= @user %>
@@ -165,7 +165,7 @@ class = handlers.TimedRotatingFileHandler
 level = DEBUG
 formatter = default
 # rotate at midnight, each day and keep 7 days
-args = ('<%= @archive_handler["log_file"] %>', 'midnight', 1, 7)
+args = (<%= @archive_handler["log_file"] %>, 'midnight', 1, 7)
 
 [formatter_default]
 

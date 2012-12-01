@@ -10,10 +10,8 @@ case node[:platform]
       action :install
     end
 
-    package "diamond" do
-      action :install
-      version node['diamond']['version']
-      notifies :restart, resources(:service => "diamond")
+    diamond_install node['hostname'] do
+        action :git
     end
 
   when "centos", "redhat", "fedora", "amazon", "scientific"
@@ -24,41 +22,43 @@ case node[:platform]
     end
 end
 
-service "diamond" do
-  action [ :enable ]
-end
-
-template "#{new_resource.diamond_configuration_path}/diamond.conf" do
-  source new_resource.diamond_configuration_source
+template "/etc/diamond/diamond.conf" do
+  source "diamond.conf.erb"
   mode 0644
   owner "root"
   group "root"
-  variables({
-            :diamond_handlers => new_resource.diamond_handlers,
-            :user => new_resource.diamond_user,
-            :group => new_resource.diamond_group,
-            :pidfile => new_resource.diamond_pidfile,
-            :collectors_path => new_resource.diamond_collectors_path,
-            :collectors_config_path => new_resource.collectors_config_path,
-            :reload_interval => new_resource.collectors_reload_interval,
-            :archive_handler => new_resource.archive_handler,
-            :graphite_handler => new_resource.graphite_handler,
-            :graphite_picklehandler => new_resource.graphite_picklehandler,
-            :statsdhandler => new_resource.statsdhandler,
-            :mysqlhandler => new_resource.mysqlhandler,
-            :tsdbhandler => new_resource.tsdbhandler,
-            :collectors => new_resource.collectors
-            })
   notifies :restart, resources(:service => "diamond")
+end
+
+cookbook_file "/etc/init/diamond.conf" do
+  source "diamond.conf"
+  mode 0755
+  owner "root"
+  group "root"
+end
+
+cookbook_file "/etc/init.d/diamond" do
+  source "diamond.init"
+  mode 0755
+  owner "root"
+  group "root"
 end
 
 #install basic collector configs
 include_recipe 'diamond::diskusage'
-include_recipe 'diamond::diskspace'
+#include_recipe 'diamond::diskspace'
 include_recipe 'diamond::vmstat'
 include_recipe 'diamond::memory'
-include_recipe 'diamond::network'
-include_recipe 'diamond::tcp'
+#include_recipe 'diamond::network'
+#include_recipe 'diamond::tcp'
 include_recipe 'diamond::loadavg'
 include_recipe 'diamond::cpu'
 
+service "diamond" do
+  action [ :enable ]
+end
+
+#service "diamond" do
+#  provider Chef::Provider::Service::Upstart
+#  action :start
+#end
