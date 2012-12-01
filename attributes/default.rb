@@ -1,5 +1,5 @@
 default['diamond']['cookbook'] = "diamond"
-default['diamond']['diamond_installation_path'] = "/usr"
+default['diamond']['diamond_installation_path'] = "/usr/local"
 default['diamond']['diamond_configuration_path'] = "/etc/diamond"
 default['diamond']['diamond_configuration_source'] = "diamond.conf.erb"
 default['diamond']['diamond_handlers'] = "diamond.handler.archive.ArchiveHandler, diamond.handler.graphitepickle.GraphitePickleHandler"
@@ -7,7 +7,7 @@ default['diamond']['diamond_user'] = String.new
 default['diamond']['diamond_group'] = String.new
 default['diamond']['diamond_pidfile'] = "/var/run/diamond.pid"
 default['diamond']['collectors_config_path'] = "/etc/diamond/collectors/"
-default['diamond']['diamond_collectors_path'] = "/usr/share/diamond/collectors/"
+default['diamond']['diamond_collectors_path'] = "/usr/local/share/diamond/collectors/"
 default['diamond']['collectors_reload_interval'] = 3600
 default['diamond']['archive_handler'] = { "log_file" => "/var/log/diamond/diamond.log", "days" => 7 }
 default['diamond']['graphite_handler'] = { "host" => "127.0.0.1", "port" => 2003, "batch" => 256, "timeout" => 15 }

@@ -12,6 +12,7 @@ case node[:platform]
 
     diamond_install node['hostname'] do
         action :git
+        notifies :restart, resources(:service => "diamond")
     end
 
   when "centos", "redhat", "fedora", "amazon", "scientific"
@@ -28,13 +29,32 @@ template "/etc/diamond/diamond.conf" do
   owner "root"
   group "root"
   notifies :restart, resources(:service => "diamond")
+  variables(
+    :diamond_handlers => node['diamond']['diamond_handlers'],
+    :user => node['diamond']['diamond_user'],
+    :group => node['diamond']['diamond_group'],
+    :pidfile => node['diamond']['diamond_pidfile'],
+    :collectors_path => node['diamond']['diamond_collectors_path'],
+    :collectors_config_path => node['diamond']['collectors_config_path'],
+    :reload_interval => node['diamond']['collectors_reload_interval'],
+    :archive_handler => node['diamond']['archive_handler'],
+    :graphite_handler => node['diamond']['graphite_handler'],
+    :graphite_picklehandler => node['diamond']['graphite_picklehandler'],
+    :mysqlhandler => node['diamond']['mysqlhandler'],
+    :statsdhandler => node['diamond']['statsdhandler'],
+    :tsdbhandler => node['diamond']['tsdbhandler'],
+    :collectors => node['diamond']['collectors'],
+  )
 end
 
-cookbook_file "/etc/init/diamond.conf" do
-  source "diamond.conf"
+template "/etc/init/diamond.conf" do
+  source "diamond.erb"
   mode 0755
   owner "root"
   group "root"
+  variables(
+    :path_to_diamond => node['diamond']['diamond_installation_path']
+  )
 end
 
 cookbook_file "/etc/init.d/diamond" do
@@ -58,7 +78,7 @@ service "diamond" do
   action [ :enable ]
 end
 
-#service "diamond" do
-#  provider Chef::Provider::Service::Upstart
-#  action :start
-#end
+service "diamond" do
+  provider Chef::Provider::Service::Upstart
+  action :start
+end
