@@ -11,8 +11,7 @@ case node[:platform]
     end
 
     diamond_install node['hostname'] do
-        action :deb
-        notifies :restart, resources(:service => "diamond")
+      action node['diamond']['install_type']
     end
 
   when "centos", "redhat", "fedora", "amazon", "scientific"
@@ -55,6 +54,7 @@ template "/etc/init/diamond.conf" do
   variables(
     :path_to_diamond => node['diamond']['diamond_installation_path']
   )
+  not_if { File.exists?("/etc/init/diamond.conf") }
 end
 
 cookbook_file "/etc/init.d/diamond" do
@@ -62,6 +62,7 @@ cookbook_file "/etc/init.d/diamond" do
   mode 0755
   owner "root"
   group "root"
+  not_if { File.exists?("/etc/init.d/diamond") }
 end
 
 #install basic collector configs
@@ -79,6 +80,6 @@ service "diamond" do
 end
 
 service "diamond" do
-  provider Chef::Provider::Service::Upstart
+#  provider Chef::Provider::Service::Upstart
   action :start
 end
