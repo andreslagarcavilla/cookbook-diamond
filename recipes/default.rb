@@ -9,9 +9,17 @@ case node[:platform]
     package "python-pysnmp4" do
       action :install
     end
-
-    diamond_install node['hostname'] do
-      action node['diamond']['install_type']
+    
+    if node['diamond']['install_type'].equal?(:apt) then
+      package "diamond" do
+        action :install
+        version node['diamond']['version']
+        notifies :restart, resources(:service => "diamond")
+      end
+    else
+      diamond_install node['hostname'] do
+        action node['diamond']['install_type']
+      end
     end
 
   when "centos", "redhat", "fedora", "amazon", "scientific"
