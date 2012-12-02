@@ -7,26 +7,26 @@
 [server]
 
 # Handlers for published metrics.
-handlers = <%= @diamond_handlers %> 
+handlers = <%= node['diamond']['diamond_handlers'] %> 
 # User diamond will run as
 # Leave empty to use the current user
-user = <%= @user %>
+user = <%= node['diamond']['diamond_user'] %>
 
 # Group diamond will run as
 # Leave empty to use the current group
-group = <%= @group %>
+group = <%= node['diamond']['diamond_group'] %>
 
 # Pid file
-pid_file = <%= @pidfile %>
+pid_file = <%= node['diamond']['diamond_pidfile'] %>
 
 # Directory to load collector modules from
-collectors_path = <%= @collectors_path %>
+collectors_path = <%= node['diamond']['diamond_collectors_path'] %>
 
 # Directory to load collector config from
-collectors_config_path = <%= @collectors_config_path %> 
+collectors_config_path = <%= node['diamond']['collectors_config_path'] %> 
 
 # Interval to reload collectors
-collectors_reload_interval = <%= @reload_interval %>
+collectors_reload_interval = <%= node['diamond']['collectors_reload_interval'] %>
 
 ################################################################################
 ### Options for handlers
@@ -41,63 +41,63 @@ keys = rotated_file
 [[ArchiveHandler]]
 
 # File to write archive log files
-log_file = <%= @archive_handler["log_file"] %>
+log_file = <%= node['diamond']['archive_handler']['log_file'] %>
 
 # Number of days to keep archive log files
-days = <%= @archive_handler["days"] %>
+days = <%= node['diamond']['archive_handler']['days'] %>
 
 [[GraphiteHandler]]
 ### Options for GraphiteHandler
 
 # Graphite server host
-host = <%= @graphite_handler["host"] %>
+host = <%= node['diamond']['graphite_handler']["host"] %>
 
 # Port to send metrics to
-port = <%= @graphite_handler["port"] %>
+port = <%= node['diamond']['graphite_handler']["port"] %>
 
 # Socket timeout (seconds)
-timeout = <%= @graphite_handler["timeout"] %>
+timeout = <%= node['diamond']['graphite_handler']["timeout"] %>
 
 [[GraphitePickleHandler]]
 ### Options for GraphitePickleHandler
 
 # Graphite server host
-host = <%= @graphite_picklehandler["host"] %>
+host = <%= node['diamond']['graphite_picklehandler']["host"] %>
 
 # Port to send metrics to
-port = <%= @graphite_picklehandler["port"] %>
+port = <%= node['diamond']['graphite_picklehandler']["port"] %>
 
 # Socket timeout (seconds)
-timeout = <%= @graphite_picklehandler["timeout"] %>
+timeout = <%= node['diamond']['graphite_picklehandler']["timeout"] %>
 
 # Batch size for pickled metrics
-batch = <%= @graphite_picklehandler["batch"] %>
+batch = <%= node['diamond']['graphite_picklehandler']["batch"] %>
 
 [[MySQLHandler]]
 ### Options for MySQLHandler
 
 # MySQL Connection Info
-hostname    = <%= @mysqlhandler["host"] %>
-port        = <%= @mysqlhandler["port"] %>
-username    = <%= @mysqlhandler["username"] %>
-password    = <%= @mysqlhandler["password"] %>
-database    = <%= @mysqlhandler["database"] %>
-table       = <%= @mysqlhandler["table"] %>
+hostname    = <%= node['diamond']['mysqlhandler']["host"] %>
+port        = <%= node['diamond']['mysqlhandler']["port"] %>
+username    = <%= node['diamond']['mysqlhandler']["username"] %>
+password    = <%= node['diamond']['mysqlhandler']["password"] %>
+database    = <%= node['diamond']['mysqlhandler']["database"] %>
+table       = <%= node['diamond']['mysqlhandler']["table"] %>
 # INT UNSIGNED NOT NULL
-col_time    = <%= @mysqlhandler["col_time"] %>
+col_time    = <%= node['diamond']['mysqlhandler']["col_time"] %>
 # VARCHAR(255) NOT NULL
-col_metric  = <%= @mysqlhandler["col_metric"] %>
+col_metric  = <%= node['diamond']['mysqlhandler']["col_metric"] %>
 # VARCHAR(255) NOT NULL
-col_value   = <%= @mysqlhandler["col_value"] %>
+col_value   = <%= node['diamond']['mysqlhandler']["col_value"] %>
 
 [[StatsdHandler]]
-host = <%= @statsdhandler["host"] %>
-port = <%= @statsdhandler["port"] %>
+host = <%= node['diamond']['statsdhandler']["host"] %>
+port = <%= node['diamond']['statsdhandler']["port"] %>
 
 [[TSDBHandler]]
-host = <%= @tsdbhandler["host"] %>
-port = <%= @tsdbhandler["port"] %>
-timeout = <%= @tsdbhandler["timeout"] %>
+host = <%= node['diamond']['tsdbhandler']["host"] %>
+port = <%= node['diamond']['tsdbhandler']["port"] %>
+timeout = <%= node['diamond']['tsdbhandler']["timeout"] %>
 
 ################################################################################
 ### Options for collectors
@@ -109,8 +109,8 @@ timeout = <%= @tsdbhandler["timeout"] %>
 # Uncomment and set to hardcode a hostname for the collector path
 # Keep in mind, periods are seperators in graphite
 # hostname = my_custom_hostname
-<% if @collectors["hostname"].length > 2 %>
-hostname = <%= @collectors["hostname"] %>
+<% if node['diamond']['collectors']["hostname"].length > 2 %>
+hostname = <%= node['diamond']['collectors']["hostname"] %>
 <% end %>
 # If you perfer to just use a different way of calculating the hostname
 # Uncomment and set this to one of these values:
@@ -119,22 +119,22 @@ hostname = <%= @collectors["hostname"] %>
 # fqdn_rev    = hostname in reverse (com.example.www)
 # uname_short = Similar to uname -n, but only the first part
 # uname_rev   = uname -r in reverse (com.example.www)
-hostname_method = <%= @collectors["hostname_method"] %>
+hostname_method = <%= node['diamond']['collectors']["hostname_method"] %>
 
 # Path Prefix and Suffix
 # you can use one or both to craft the path where you want to put metrics
 # such as: %(path_prefix)s.$(hostname)s.$(path_suffix)s.$(metric)s
 # path_prefix = servers
 # path_suffix =
-<% if @collectors["path_prefix"].length > 2 %>
-path_prefix = <%= @collectors["path_prefix"] %>
+<% if node['diamond']['collectors']["path_prefix"].length > 2 %>
+path_prefix = <%= node['diamond']['collectors']["path_prefix"] %>
 <% end %>
-<% if @collectors["path_suffix"].length > 2 %>
-path_suffix = <%= @collectors["path_suffix"] %>
+<% if node['diamond']['collectors']["path_suffix"].length > 2 %>
+path_suffix = <%= node['diamond']['collectors']["path_suffix"] %>
 <% end %>
 
 # Default Poll Interval (seconds)
-interval = <%= @collectors["interval"] %>
+interval = <%= node['diamond']['collectors']["interval"] %>
 
 ################################################################################
 ### Options for logging
@@ -165,7 +165,7 @@ class = handlers.TimedRotatingFileHandler
 level = DEBUG
 formatter = default
 # rotate at midnight, each day and keep 7 days
-args = (<%= @archive_handler["log_file"] %>, 'midnight', 1, 7)
+args = (<%= node['diamond']['archive_handler']["log_file"] %>, 'midnight', 1, 7)
 
 [formatter_default]
 

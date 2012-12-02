@@ -31,27 +31,12 @@ case node[:platform]
 end
 
 template "/etc/diamond/diamond.conf" do
+  action :create_if_missing
   source "diamond.conf.erb"
   mode 0644
   owner "root"
   group "root"
   notifies :restart, resources(:service => "diamond")
-  variables(
-    :diamond_handlers => node['diamond']['diamond_handlers'],
-    :user => node['diamond']['diamond_user'],
-    :group => node['diamond']['diamond_group'],
-    :pidfile => node['diamond']['diamond_pidfile'],
-    :collectors_path => node['diamond']['diamond_collectors_path'],
-    :collectors_config_path => node['diamond']['collectors_config_path'],
-    :reload_interval => node['diamond']['collectors_reload_interval'],
-    :archive_handler => node['diamond']['archive_handler'],
-    :graphite_handler => node['diamond']['graphite_handler'],
-    :graphite_picklehandler => node['diamond']['graphite_picklehandler'],
-    :mysqlhandler => node['diamond']['mysqlhandler'],
-    :statsdhandler => node['diamond']['statsdhandler'],
-    :tsdbhandler => node['diamond']['tsdbhandler'],
-    :collectors => node['diamond']['collectors'],
-  )
 end
 
 template "/etc/init/diamond.conf" do
@@ -59,9 +44,6 @@ template "/etc/init/diamond.conf" do
   mode 0755
   owner "root"
   group "root"
-  variables(
-    :path_to_diamond => node['diamond']['diamond_installation_path']
-  )
   not_if { File.exists?("/etc/init/diamond.conf") }
 end
 
