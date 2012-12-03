@@ -7,7 +7,7 @@ attribute :required_python_packages, :kind_of => Hash, :default => { "configobj"
 attribute :required_debian_packages, :kind_of => Array, :default => ["pbuilder","python-mock","python-configobj","cdbs"]
 attribute :cookbook, :kind_of => String, :default => "diamond"
 
-attribute :diamond_version, :kind_of => String, :default => "3.1.175"
+attribute :diamond_version, :kind_of => String, :default => "3.1.181"
 
 def initialize(*args)
   super
