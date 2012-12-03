@@ -7,27 +7,26 @@
 [server]
 
 # Handlers for published metrics.
-handlers = diamond.handler.graphite.GraphiteHandler, diamond.handler.archive.ArchiveHandler
-
+handlers = <%= node['diamond']['diamond_handlers'] %> 
 # User diamond will run as
 # Leave empty to use the current user
-user =
+user = <%= node['diamond']['diamond_user'] %>
 
 # Group diamond will run as
 # Leave empty to use the current group
-group =
+group = <%= node['diamond']['diamond_group'] %>
 
 # Pid file
-pid_file = /var/run/diamond.pid
+pid_file = <%= node['diamond']['diamond_pidfile'] %>
 
 # Directory to load collector modules from
-collectors_path = /usr/share/diamond/collectors/
+collectors_path = <%= node['diamond']['diamond_collectors_path'] %>
 
 # Directory to load collector config from
-collectors_config_path = /etc/diamond/collectors/
+collectors_config_path = <%= node['diamond']['collectors_config_path'] %> 
 
 # Interval to reload collectors
-collectors_reload_interval = 3600
+collectors_reload_interval = <%= node['diamond']['collectors_reload_interval'] %>
 
 ################################################################################
 ### Options for handlers
@@ -42,63 +41,63 @@ keys = rotated_file
 [[ArchiveHandler]]
 
 # File to write archive log files
-log_file = /var/log/diamond/archive.log
+log_file = <%= node['diamond']['archive_handler']['log_file'] %>
 
 # Number of days to keep archive log files
-days = 7
+days = <%= node['diamond']['archive_handler']['days'] %>
 
 [[GraphiteHandler]]
 ### Options for GraphiteHandler
 
 # Graphite server host
-host = graphite
+host = <%= node['diamond']['graphite_handler']["host"] %>
 
 # Port to send metrics to
-port = 2003
+port = <%= node['diamond']['graphite_handler']["port"] %>
 
 # Socket timeout (seconds)
-timeout = 15
+timeout = <%= node['diamond']['graphite_handler']["timeout"] %>
 
 [[GraphitePickleHandler]]
 ### Options for GraphitePickleHandler
 
 # Graphite server host
-host = graphite
+host = <%= node['diamond']['graphite_picklehandler']["host"] %>
 
 # Port to send metrics to
-port = 2004
+port = <%= node['diamond']['graphite_picklehandler']["port"] %>
 
 # Socket timeout (seconds)
-timeout = 15
+timeout = <%= node['diamond']['graphite_picklehandler']["timeout"] %>
 
 # Batch size for pickled metrics
-batch = 256
+batch = <%= node['diamond']['graphite_picklehandler']["batch"] %>
 
 [[MySQLHandler]]
 ### Options for MySQLHandler
 
 # MySQL Connection Info
-hostname    = 127.0.0.1
-port        = 3306
-username    = root
-password    =
-database    = diamond
-table       = metrics
+hostname    = <%= node['diamond']['mysqlhandler']["host"] %>
+port        = <%= node['diamond']['mysqlhandler']["port"] %>
+username    = <%= node['diamond']['mysqlhandler']["username"] %>
+password    = <%= node['diamond']['mysqlhandler']["password"] %>
+database    = <%= node['diamond']['mysqlhandler']["database"] %>
+table       = <%= node['diamond']['mysqlhandler']["table"] %>
 # INT UNSIGNED NOT NULL
-col_time    = timestamp
+col_time    = <%= node['diamond']['mysqlhandler']["col_time"] %>
 # VARCHAR(255) NOT NULL
-col_metric  = metric
+col_metric  = <%= node['diamond']['mysqlhandler']["col_metric"] %>
 # VARCHAR(255) NOT NULL
-col_value   = value
+col_value   = <%= node['diamond']['mysqlhandler']["col_value"] %>
 
 [[StatsdHandler]]
-host = 127.0.0.1
-port = 8125
+host = <%= node['diamond']['statsdhandler']["host"] %>
+port = <%= node['diamond']['statsdhandler']["port"] %>
 
 [[TSDBHandler]]
-host = 127.0.0.1
-port = 4242
-timeout = 15
+host = <%= node['diamond']['tsdbhandler']["host"] %>
+port = <%= node['diamond']['tsdbhandler']["port"] %>
+timeout = <%= node['diamond']['tsdbhandler']["timeout"] %>
 
 ################################################################################
 ### Options for collectors
@@ -110,7 +109,9 @@ timeout = 15
 # Uncomment and set to hardcode a hostname for the collector path
 # Keep in mind, periods are seperators in graphite
 # hostname = my_custom_hostname
-
+<% if node['diamond']['collectors']["hostname"].length > 2 %>
+hostname = <%= node['diamond']['collectors']["hostname"] %>
+<% end %>
 # If you perfer to just use a different way of calculating the hostname
 # Uncomment and set this to one of these values:
 # fqdn_short  = Default. Similar to hostname -s
@@ -118,16 +119,22 @@ timeout = 15
 # fqdn_rev    = hostname in reverse (com.example.www)
 # uname_short = Similar to uname -n, but only the first part
 # uname_rev   = uname -r in reverse (com.example.www)
-# hostname_method = fqdn_short
+hostname_method = <%= node['diamond']['collectors']["hostname_method"] %>
 
 # Path Prefix and Suffix
 # you can use one or both to craft the path where you want to put metrics
 # such as: %(path_prefix)s.$(hostname)s.$(path_suffix)s.$(metric)s
 # path_prefix = servers
 # path_suffix =
+<% if node['diamond']['collectors']["path_prefix"].length > 2 %>
+path_prefix = <%= node['diamond']['collectors']["path_prefix"] %>
+<% end %>
+<% if node['diamond']['collectors']["path_suffix"].length > 2 %>
+path_suffix = <%= node['diamond']['collectors']["path_suffix"] %>
+<% end %>
 
 # Default Poll Interval (seconds)
-# interval = 300
+interval = <%= node['diamond']['collectors']["interval"] %>
 
 ################################################################################
 ### Options for logging
@@ -158,7 +165,7 @@ class = handlers.TimedRotatingFileHandler
 level = DEBUG
 formatter = default
 # rotate at midnight, each day and keep 7 days
-args = ('/var/log/diamond/diamond.log', 'midnight', 1, 7)
+args = (<%= node['diamond']['archive_handler']["log_file"] %>, 'midnight', 1, 7)
 
 [formatter_default]
 
