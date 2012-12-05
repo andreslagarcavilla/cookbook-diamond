@@ -25,7 +25,7 @@ case node['diamond']['install_type']
         repository node['diamond']['git_repository_uri']
         reference node['diamond']['git_reference']
         action :checkout
-        not_if { ::File.exists?("/mnt/git/#{new_resource.name}/setup.py") }
+        not_if { ::File.exists?("#{node[:diamond][:git_path]}/setup.py") }
       end
 
       ruby_block "get_diamond_version" do
@@ -75,7 +75,7 @@ case node['diamond']['install_type']
         repository node['diamond']['git_repository_uri']
         reference node['diamond']['git_reference']
         action :checkout
-        not_if { ::File.exists?("/mnt/git/#{new_resource.name}/setup.py") }
+        not_if { ::File.exists?("#{node[:diamond][:git_path]}/setup.py") }
       end
 
       execute "install diamond" do
