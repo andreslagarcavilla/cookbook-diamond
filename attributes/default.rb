@@ -1,10 +1,16 @@
 case node[:platform]
-  when "ubuntu","debian"
-    default[:diamond][:version] = '3.1.181'
+  when "ubuntu", "debian"
+    default[:diamond][:version] = "3.0.2"
     default['diamond']['diamond_installation_path'] = "/usr"
     default['diamond']['install_type'] = :deb
+
+  when "centos", "redhat", "fedora", "amazon", "scientific"
+    default[:diamond][:version] = '3.0.2-0'
+    default['diamond']['diamond_installation_path'] = "/usr"
+    default['diamond']['install_type'] = :rpm
+
   else
-    default[:diamond][:version] = '3.1.181-0'
+    default[:diamond][:version] = "3.0.2"
     default['diamond']['diamond_installation_path'] = "/usr/local"
     default['diamond']['install_type'] = :git
 end
