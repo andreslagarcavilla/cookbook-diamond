@@ -1,22 +1,17 @@
 case node[:platform]
   when "ubuntu", "debian"
-    default[:diamond][:version] = "3.0.2"
-    default['diamond']['diamond_installation_path'] = "/usr"
+    default[:diamond][:version] = '3.2'
+    default[:diamond][:package_version] = '3.2.0'
     default['diamond']['install_type'] = :deb
-
-  when "centos", "redhat", "fedora", "amazon", "scientific"
-    default[:diamond][:version] = '3.0.2-0'
-    default['diamond']['diamond_installation_path'] = "/usr"
-    default['diamond']['install_type'] = :rpm
-
   else
-    default[:diamond][:version] = "3.0.2"
-    default['diamond']['diamond_installation_path'] = "/usr/local"
-    default['diamond']['install_type'] = :git
+    default[:diamond][:version] = '3.2'
+    default[:diamond][:package_version] = '3.2.0-0'
+    default['diamond']['install_type'] = :rpm
 end
 
 default['diamond']['cookbook'] = "diamond"
 default['diamond']['diamond_configuration_path'] = "/etc/diamond"
+default['diamond']['diamond_installation_path'] = "/usr"
 default['diamond']['diamond_configuration_source'] = "diamond.conf.erb"
 default['diamond']['diamond_handlers'] = "diamond.handler.archive.ArchiveHandler, diamond.handler.graphitepickle.GraphitePickleHandler"
 default['diamond']['diamond_user'] = String.new

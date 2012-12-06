@@ -21,19 +21,17 @@ case node['diamond']['install_type']
         recursive true
       end
 
-      git node[:diamond][:git_path] do
-        repository node['diamond']['git_repository_uri']
-        reference node['diamond']['git_reference']
-        action :checkout
-        not_if { ::File.exists?("#{node[:diamond][:git_path]}/setup.py") }
+      if node[:diamond][:version] != 'master' then
+            node.override[:diamond][:git_reference] = "v#{node[:diamond][:version]}"
+      else
+            node.override[:diamond][:git_reference] = node[:diamond][:version]
       end
 
-      ruby_block "get_diamond_version" do
-        block do
-          cmd = Mixlib::ShellOut.new("cd #{node[:diamond][:git_path]} && ./version.sh").run_command
-          node.set[:diamond][:version] = cmd.stdout.gsub("\n",'')
-          Chef::Log.info "Diamond version is #{node[:diamond][:version]}."
-        end
+      git node[:diamond][:git_path] do
+        repository node[:diamond][:git_repository_uri]
+        reference node[:diamond][:git_reference]
+        action :checkout
+        not_if { ::File.exists?("#{node[:diamond][:git_path]}/setup.py") }
       end
 
       execute "build diamond" do
@@ -41,47 +39,19 @@ case node['diamond']['install_type']
         command "make builddeb"
       end
 
-      package "diamond" do
-        source "#{node[:diamond][:git_path]}/build/diamond_#{node['diamond']['version']}_all.deb"
-        provider Chef::Provider::Package::Dpkg
-        version node['diamond']['version']
-        options "--force-confnew,confmiss"
-        action :install
-      end
-
-      directory "clean up temp git path" do
-        path node[:diamond][:git_tmp]
-        action :delete
-        recursive true
-      end
-    end
-
-  when :git
-    unless ::File.exists?('/usr/bin/diamond')
-      node[:diamond][:required_python_packages].collect do |pkg, ver|
-        python_pip pkg do
-          version ver
-          action :install
+      ruby_block "get_diamond_version" do
+        block do
+          Chef::Log.info "Diamond version is #{node[:diamond][:version]}."
+          Chef::Log.info "Diamond package version is #{node[:diamond][:package_version]}."
         end
       end
 
-      directory "create_temp_git_path" do
-        path node[:diamond][:git_tmp]
-        action :create
-        recursive true
-      end
-
-      git node[:diamond][:git_path] do
-        repository node['diamond']['git_repository_uri']
-        reference node['diamond']['git_reference']
-        action :checkout
-        not_if { ::File.exists?("#{node[:diamond][:git_path]}/setup.py") }
-      end
-
-      execute "install diamond" do
-        cwd node[:diamond][:git_path]
-        command "python setup.py install"
-        creates "/usr/local/bin/diamond"
+      package "diamond" do
+        source "#{node[:diamond][:git_path]}/build/diamond_#{node[:diamond][:package_version]}_all.deb"
+        provider Chef::Provider::Package::Dpkg
+        version node[:diamond][:package_version]
+        options "--force-confnew,confmiss"
+        action :install
       end
 
       directory "clean up temp git path" do

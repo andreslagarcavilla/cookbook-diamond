@@ -11,6 +11,26 @@ convenience the wiki is setup as a submodule of this checkout. You can get it vi
     git submodule init
     git submodule update
 
+Attributes
+==========
+
+* `default[:diamond][:version]` - Version of Diamond to install.
+* `default[:diamond][:package_version]` - Package version of Diamond (i.e. Diamond 3.2 is diamond\_3.2.0\_all.deb)
+* `default[:diamond][:installation_type]` - :deb, :apt or :rpm -- :deb builds a dpkg from the Brightcove git repository.
+* `default['diamond']['diamond_configuration_path']` - Location of diamond.conf
+* `default['diamond']['diamond_installation_path']` - Root install location (i.e. /usr)
+* `default['diamond']['diamond_handlers']` = Default diamond handlers
+* `default['diamond']['diamond_user']` - User to run diamond as
+* `default['diamond']['diamond_group']` - Group to run diamond as
+* `default['diamond']['collectors_config_path']` - Location of collector configurations
+* `default['diamond']['collectors_reload_interval']` - How often to check for new collector configs in seconds
+* `default['diamond']['archive_handler']` - Settings for archive handler
+* `default['diamond']['graphite_handler']` - Settings for graphite handler
+* `default['diamond']['graphite_picklehandler']` - Settings for graphite pickle handler
+* `default['diamond']['statsdhandler']` - Settings for statsd handler
+* `default['diamond']['tsdbhandler']` - Settings for tsdb handler
+* `default['diamond']['mysqlhandler']` - Settings for mysql handler
+
 Definitions
 ===========
 This cookbook has a definition to make it easy to create collector configs. By default, the definition enables the
