@@ -1,11 +1,11 @@
-case node[:platform]
+case node['platform']
   when "ubuntu", "debian"
-    default[:diamond][:version] = '3.2'
-    default[:diamond][:package_version] = '3.2.0'
+    default['diamond']['version'] = '3.2'
+    default['diamond']['package_version'] = '3.2.0'
     default['diamond']['install_type'] = :deb
   else
-    default[:diamond][:version] = '3.2'
-    default[:diamond][:package_version] = '3.2.0-0'
+    default['diamond']['version'] = '3.2'
+    default['diamond']['package_version'] = '3.2.0-0'
     default['diamond']['install_type'] = :rpm
 end
 

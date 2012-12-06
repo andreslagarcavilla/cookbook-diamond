@@ -1,7 +1,7 @@
 # install diamond and enable basic collectors
 
 service "diamond" do
-  action [ :nothing ]
+  action :nothing
 end
 
 include_recipe "diamond::install"
