@@ -33,13 +33,18 @@ end
 
 # Install basic collector configs
 include_recipe 'diamond::diskusage'
-#include_recipe 'diamond::diskspace'
+include_recipe 'diamond::diskspace'
 include_recipe 'diamond::vmstat'
 include_recipe 'diamond::memory'
-#include_recipe 'diamond::network'
-#include_recipe 'diamond::tcp'
+include_recipe 'diamond::network'
+include_recipe 'diamond::tcp'
 include_recipe 'diamond::loadavg'
 include_recipe 'diamond::cpu'
+include_recipe 'diamond::filestat'
+include_recipe 'diamond::interrupt'
+include_recipe 'diamond::ipmisensor'
+include_recipe 'diamond::proc'
+include_recipe 'diamond::slabinfo'
 
 service "diamond" do
   action :enable
