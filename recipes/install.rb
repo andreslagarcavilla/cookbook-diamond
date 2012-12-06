@@ -5,57 +5,57 @@ case node['diamond']['install_type']
     unless ::File.exists?('/usr/bin/diamond')
       package "diamond" do
         action :install
-        version node[:diamond][:version]
+        version node['diamond']['version']
       end
     end
 
   when :deb
     unless ::File.exists?('/usr/bin/diamond')
-      node[:diamond][:required_debian_packages].collect do |pkg|
+      node['diamond']['required_debian_packages'].collect do |pkg|
         package pkg
       end
 
       directory "create_temp_git_path" do
-        path node[:diamond][:git_tmp]
+        path node['diamond']['git_tmp']
         action :create
         recursive true
       end
 
-      if node[:diamond][:version] != 'master' then
-            node.override[:diamond][:git_reference] = "v#{node[:diamond][:version]}"
+      if node['diamond']['version'] != 'master' then
+            node.override['diamond']['git_reference'] = "v#{node['diamond']['version']}"
       else
-            node.override[:diamond][:git_reference] = node[:diamond][:version]
+            node.override['diamond']['git_reference'] = node['diamond']['version']
       end
 
-      git node[:diamond][:git_path] do
-        repository node[:diamond][:git_repository_uri]
-        reference node[:diamond][:git_reference]
+      git node['diamond']['git_path'] do
+        repository node['diamond']['git_repository_uri']
+        reference node['diamond']['git_reference']
         action :checkout
-        not_if { ::File.exists?("#{node[:diamond][:git_path]}/setup.py") }
+        not_if { ::File.exists?("#{node['diamond']['git_path']}/setup.py") }
       end
 
       execute "build diamond" do
-        cwd node[:diamond][:git_path]
+        cwd node['diamond']['git_path']
         command "make builddeb"
       end
 
-      ruby_block "get_diamond_version" do
+      ruby_block "log_diamond_version" do
         block do
-          Chef::Log.info "Diamond version is #{node[:diamond][:version]}."
-          Chef::Log.info "Diamond package version is #{node[:diamond][:package_version]}."
+          Chef::Log.info "Diamond version is #{node['diamond']['version']}."
+          Chef::Log.info "Diamond package version is #{node['diamond']['package_version']}."
         end
       end
 
       package "diamond" do
-        source "#{node[:diamond][:git_path]}/build/diamond_#{node[:diamond][:package_version]}_all.deb"
+        source "#{node['diamond']['git_path']}/build/diamond_#{node['diamond']['package_version']}_all.deb"
         provider Chef::Provider::Package::Dpkg
-        version node[:diamond][:package_version]
+        version node['diamond']['package_version']
         options "--force-confnew,confmiss"
         action :install
       end
 
       directory "clean up temp git path" do
-        path node[:diamond][:git_tmp]
+        path node['diamond']['git_tmp']
         action :delete
         recursive true
       end
