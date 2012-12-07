@@ -1,11 +1,11 @@
 case node['platform']
   when "ubuntu", "debian"
-    default['diamond']['version'] = '3.2'
-    default['diamond']['package_version'] = '3.2.0'
+    default['diamond']['version'] = '3.0.2'
+    default['diamond']['package_version'] = '3.0.2'
     default['diamond']['install_type'] = :deb
   else
     default['diamond']['version'] = '3.2'
-    default['diamond']['package_version'] = '3.2.0-0'
+    default['diamond']['package_version'] = '3.0.2-0'
     default['diamond']['install_type'] = :rpm
 end
 
@@ -27,3 +27,4 @@ default['diamond']['statsdhandler'] = { "host" => "127.0.0.1", "port" => 8125 }
 default['diamond']['tsdbhandler'] = { "host" => "127.0.0.1", "port" => 4242, "timeout" => 15 }
 default['diamond']['mysqlhandler'] = { "host" => "127.0.0.1", "port" => 3306, "username" => String.new, "password" => String.new, "database" => "diamond", "table" => "metrics", "col_time" => "timestamp", "col_metric" => "metric", "col_value" => "value" }
 default['diamond']['collectors'] = { "hostname_method" => "fqdn_short", "hostname" => String.new, "path_prefix" => String.new, "path_suffix" => String.new, "interval" => 300 }
+default['diamond']['force_install'] = false
