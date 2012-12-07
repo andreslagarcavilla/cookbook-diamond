@@ -30,6 +30,7 @@ Attributes
 * `default['diamond']['statsdhandler']` - Settings for statsd handler
 * `default['diamond']['tsdbhandler']` - Settings for tsdb handler
 * `default['diamond']['mysqlhandler']` - Settings for mysql handler
+* `default['diamond']['force_install']` - Set to true to force a rebuild and install of diamond
 
 Definitions
 ===========

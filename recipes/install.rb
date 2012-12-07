@@ -10,7 +10,7 @@ case node['diamond']['install_type']
     end
 
   when :deb
-    unless ::File.exists?('/usr/bin/diamond')
+    unless ::File.exists?('/usr/bin/diamond') or node['diamond']['force_install']
       node['diamond']['required_debian_packages'].collect do |pkg|
         package pkg
       end
