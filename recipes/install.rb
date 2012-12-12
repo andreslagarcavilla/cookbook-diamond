@@ -2,13 +2,6 @@
 
 case node['diamond']['install_type']
   when :apt, :rpm
-    execute "rm" do
-      command "rm -f *"
-      cwd "#{node['diamond']['diamond_configuration_path']}/collectors"
-      action :run 
-      only_if { ::File.exists?("#{node['diamond']['diamond_configuration_path']}/collectors") }
-    end
-
     unless ::File.exists?('/usr/bin/diamond')
       package "diamond" do
         action :install
@@ -18,13 +11,6 @@ case node['diamond']['install_type']
     end
 
   when :deb
-    execute "rm" do
-      command "rm -f *"
-      cwd "#{node['diamond']['diamond_configuration_path']}/collectors"
-      action :run 
-      only_if { ::File.exists?("#{node['diamond']['diamond_configuration_path']}/collectors") }
-    end
-
     unless ::File.exists?('/usr/bin/diamond') or node['diamond']['force_install']
       node['diamond']['required_debian_packages'].collect do |pkg|
         package pkg
