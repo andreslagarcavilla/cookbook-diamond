@@ -6,12 +6,14 @@ case node['diamond']['install_type']
       command "rm -f *"
       cwd "#{node['diamond']['diamond_configuration_path']}/collectors"
       action :run 
+      only_if { ::File.exists?("#{node['diamond']['diamond_configuration_path']}/collectors") }
     end
 
     unless ::File.exists?('/usr/bin/diamond')
       package "diamond" do
         action :install
         version node['diamond']['version']
+        notifies :start, resources(:service => "diamond")
       end
     end
 
@@ -20,6 +22,7 @@ case node['diamond']['install_type']
       command "rm -f *"
       cwd "#{node['diamond']['diamond_configuration_path']}/collectors"
       action :run 
+      only_if { ::File.exists?("#{node['diamond']['diamond_configuration_path']}/collectors") }
     end
 
     unless ::File.exists?('/usr/bin/diamond') or node['diamond']['force_install']
@@ -64,6 +67,7 @@ case node['diamond']['install_type']
         version node['diamond']['package_version']
         options "--force-confnew,confmiss"
         action :install
+	notifies :start, resources(:service => "diamond")
       end
 
       directory "clean up temp git path" do
