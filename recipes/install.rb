@@ -58,6 +58,7 @@ case node['diamond']['install_type']
 
       file "/etc/diamond/diamond.conf" do
         action :delete
+        only_if { ::File.exists?("/etc/diamond/diamond.conf"") }
       end
 
       directory "clean up temp git path" do
