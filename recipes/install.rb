@@ -56,6 +56,10 @@ case node['diamond']['install_type']
 	notifies :start, resources(:service => "diamond")
       end
 
+      file "/etc/diamond/diamond.conf" do
+        action :delete
+      end
+
       directory "clean up temp git path" do
         path node['diamond']['git_tmp']
         action :delete
