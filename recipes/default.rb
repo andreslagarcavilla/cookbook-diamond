@@ -7,7 +7,7 @@ end
 include_recipe "diamond::install"
 
 template "/etc/diamond/diamond.conf" do
-  action :create_if_missing
+  action :create
   source "diamond.conf.erb"
   mode 0644
   owner "root"
