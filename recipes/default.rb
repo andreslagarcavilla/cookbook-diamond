@@ -1,6 +1,8 @@
 # install diamond and enable basic collectors
 
 service "diamond" do
+  provider Chef::Provider::Service::Upstart
+  supports :status => true, :restart => true
   action :nothing
 end
 
@@ -20,7 +22,7 @@ template "/etc/init/diamond.conf" do
   mode 0755
   owner "root"
   group "root"
-  not_if { ::File.exists?("/etc/init/diamond.conf") }
+  action :create_if_missing
 end
 
 cookbook_file "/etc/init.d/diamond" do
@@ -28,7 +30,7 @@ cookbook_file "/etc/init.d/diamond" do
   mode 0755
   owner "root"
   group "root"
-  not_if { ::File.exists?("/etc/init.d/diamond") }
+  action :create_if_missing
 end
 
 # Install basic collector configs
@@ -47,5 +49,6 @@ include_recipe 'diamond::slabinfo'
 
 service "diamond" do
   provider Chef::Provider::Service::Upstart
+  supports :status => true, :restart => true
   action [:enable, :start]
 end
