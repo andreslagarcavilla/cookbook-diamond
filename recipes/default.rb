@@ -46,9 +46,6 @@ include_recipe 'diamond::proc'
 include_recipe 'diamond::slabinfo'
 
 service "diamond" do
-  action :enable
-end
-
-service "diamond" do
-  action :start
+  provider Chef::Provider::Service::Upstart
+  action [:enable, :start]
 end
