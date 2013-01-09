@@ -32,6 +32,8 @@ Attributes
 * `default['diamond']['mysqlhandler']` - Settings for mysql handler
 * `default['diamond']['force_install']` - Set to true to force a rebuild and install of diamond
 
+* `default['diamond']['add_collectors'] - List of collectors to enable.  Defaults to diamond default collector list.
+
 Definitions
 ===========
 This cookbook has a definition to make it easy to create collector configs. By default, the definition enables the
