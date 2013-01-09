@@ -28,3 +28,4 @@ default['diamond']['tsdbhandler'] = { "host" => "127.0.0.1", "port" => 4242, "ti
 default['diamond']['mysqlhandler'] = { "host" => "127.0.0.1", "port" => 3306, "username" => String.new, "password" => String.new, "database" => "diamond", "table" => "metrics", "col_time" => "timestamp", "col_metric" => "metric", "col_value" => "value" }
 default['diamond']['collectors'] = { "hostname_method" => "fqdn_short", "hostname" => String.new, "path_prefix" => String.new, "path_suffix" => String.new, "interval" => 300 }
 default['diamond']['force_install'] = false
+default['diamond']['add_collectors'] = ['cpu', 'diskspace', 'diskusage', 'loadavg', 'memory', 'sockstat', 'vmstat']
