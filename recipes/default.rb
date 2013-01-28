@@ -14,7 +14,7 @@ template "/etc/diamond/diamond.conf" do
   mode 0644
   owner "root"
   group "root"
-  notifies :restart, resources(:service => "diamond")
+  notifies :restart, "service[diamond]"
 end
 
 template "/etc/init/diamond.conf" do
