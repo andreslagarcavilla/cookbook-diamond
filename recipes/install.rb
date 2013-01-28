@@ -6,7 +6,7 @@ case node['diamond']['install_type']
       package "diamond" do
         action :install
         version node['diamond']['version']
-        notifies :start, resources(:service => "diamond")
+        notifies :start, "service[diamond]"
       end
     end
 
@@ -53,7 +53,7 @@ case node['diamond']['install_type']
         version node['diamond']['package_version']
         options "--force-confnew,confmiss"
         action :install
-	notifies :start, resources(:service => "diamond")
+	notifies :start, "service[diamond]"
       end
 
       directory "clean up temp git path" do
