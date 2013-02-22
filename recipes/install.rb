@@ -2,7 +2,7 @@
 
 case node['diamond']['install_type']
   when :apt, :rpm
-    unless ::File.exists?('/usr/bin/diamond')
+    if not ::File.exists?('/usr/bin/diamond') or node['diamond']['force_install']
       package "diamond" do
         action :install
         version node['diamond']['version']
@@ -11,7 +11,25 @@ case node['diamond']['install_type']
     end
 
   when :deb
-    unless ::File.exists?('/usr/bin/diamond') or node['diamond']['force_install']
+    # Compare diamond installed version against what we really want.
+    wanted_diamond_version = node['diamond']['version']
+    installed_diamond_version=`/usr/bin/dpkg-query -W -f='${Version}' diamond`
+
+    if $?.to_i != 0
+      Chef::Log.info "[diamond] Diamond is not currently installed."
+      install_diamond = true
+      installed_diamond_version = nil
+    else
+      `/usr/bin/dpkg --compare-versions #{installed_diamond_version} lt #{wanted_diamond_version}`
+      $?.to_i == 0 ? install_diamond = true : install_diamond = false
+
+      Chef::Log.info "[diamond] We want Diamond version #{wanted_diamond_version}."
+      Chef::Log.info "[diamond] Currently installed Diamond version is #{installed_diamond_version}."
+    end
+
+    if install_diamond or node['diamond']['force_install']
+      Chef::Log.info "[diamond] Installing Diamond version #{wanted_diamond_version}."
+
       node['diamond']['required_debian_packages'].collect do |pkg|
         package pkg
       end
@@ -40,20 +58,24 @@ case node['diamond']['install_type']
         command "make builddeb"
       end
 
-      ruby_block "log_diamond_version" do
-        block do
-          Chef::Log.info "Diamond version is #{node['diamond']['version']}."
-          Chef::Log.info "Diamond package version is #{node['diamond']['package_version']}."
+      if installed_diamond_version
+        package "diamond" do
+          source "#{node['diamond']['git_path']}/build/diamond_#{node['diamond']['package_version']}_all.deb"
+          provider Chef::Provider::Package::Dpkg
+          version node['diamond']['package_version']
+          options "--force-confnew,confmiss"
+          action :upgrade
+          notifies :restart, "service[diamond]"
         end
-      end
-
-      package "diamond" do
-        source "#{node['diamond']['git_path']}/build/diamond_#{node['diamond']['package_version']}_all.deb"
-        provider Chef::Provider::Package::Dpkg
-        version node['diamond']['package_version']
-        options "--force-confnew,confmiss"
-        action :install
-	notifies :start, "service[diamond]"
+      else
+        package "diamond" do
+          source "#{node['diamond']['git_path']}/build/diamond_#{node['diamond']['package_version']}_all.deb"
+          provider Chef::Provider::Package::Dpkg
+          version node['diamond']['package_version']
+          options "--force-confnew,confmiss"
+          action :install
+          notifies :start, "service[diamond]"
+        end
       end
 
       directory "clean up temp git path" do
@@ -61,5 +83,7 @@ case node['diamond']['install_type']
         action :delete
         recursive true
       end
+    else
+      Chef::Log.info "[diamond] Diamond is up to date."
     end
 end
