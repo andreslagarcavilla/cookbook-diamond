@@ -58,23 +58,23 @@ case node['diamond']['install_type']
         command "make builddeb"
       end
 
+      package "diamond" do
+        source "#{node['diamond']['git_path']}/build/diamond_#{node['diamond']['package_version']}_all.deb"
+        provider Chef::Provider::Package::Dpkg
+        version node['diamond']['package_version']
+        options "--force-confnew,confmiss"
+        action :install
+      end
+
       if installed_diamond_version
-        package "diamond" do
-          source "#{node['diamond']['git_path']}/build/diamond_#{node['diamond']['package_version']}_all.deb"
-          provider Chef::Provider::Package::Dpkg
-          version node['diamond']['package_version']
-          options "--force-confnew,confmiss"
-          action :upgrade
-          notifies :restart, "service[diamond]"
+        service "diamond" do
+          provider Chef::Provider::Service::Upstart
+          action :restart
         end
       else
-        package "diamond" do
-          source "#{node['diamond']['git_path']}/build/diamond_#{node['diamond']['package_version']}_all.deb"
-          provider Chef::Provider::Package::Dpkg
-          version node['diamond']['package_version']
-          options "--force-confnew,confmiss"
-          action :install
-          notifies :start, "service[diamond]"
+        service "diamond" do
+          provider Chef::Provider::Service::Upstart
+          action :start
         end
       end
 
