@@ -9,7 +9,7 @@ define :collector_config, :action => :create, :enabled => "True", :snmp => false
         source "snmp_collector_config.conf.erb"
       end
       cookbook "diamond"
-      owner "root"
+      owner "diamond"
       group "root"
       mode "0660"
       variables( :params => params )
