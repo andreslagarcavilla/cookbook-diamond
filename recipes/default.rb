@@ -25,6 +25,14 @@ template "/etc/init/diamond.conf" do
   action :create_if_missing
 end
 
+template "/etc/default/diamond" do
+  source "diamond.default.erb"
+  mode 0644
+  owner "root"
+  group "root"
+  notifies :restart, "service[diamond]"
+end
+
 cookbook_file "/etc/init.d/diamond" do
   source "diamond.init"
   mode 0755

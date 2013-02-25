@@ -8,13 +8,18 @@
 
 # Handlers for published metrics.
 handlers = <%= node['diamond']['diamond_handlers'] %> 
+<% if node['diamond']['diamond_user'] %>
+
 # User diamond will run as
 # Leave empty to use the current user
 user = <%= node['diamond']['diamond_user'] %>
+<% end %>
+<% if node['diamond']['diamond_group'] %>
 
 # Group diamond will run as
 # Leave empty to use the current group
 group = <%= node['diamond']['diamond_group'] %>
+<% end %>
 
 # Pid file
 pid_file = <%= node['diamond']['diamond_pidfile'] %>
@@ -24,6 +29,9 @@ collectors_path = <%= node['diamond']['diamond_collectors_path'] %>
 
 # Directory to load collector config from
 collectors_config_path = <%= node['diamond']['collectors_config_path'] %> 
+
+# Directory to load handler configs from
+handlers_config_path = <%= node['diamond']['handlers_config_path'] %>
 
 # Interval to reload collectors
 collectors_reload_interval = <%= node['diamond']['collectors_reload_interval'] %>
@@ -57,6 +65,9 @@ port = <%= node['diamond']['graphite_handler']["port"] %>
 
 # Socket timeout (seconds)
 timeout = <%= node['diamond']['graphite_handler']["timeout"] %>
+
+# Batch size for metrics
+batch = <%= node['diamond']['graphite_handler']["batch"] %>
 
 [[GraphitePickleHandler]]
 ### Options for GraphitePickleHandler
@@ -109,16 +120,25 @@ timeout = <%= node['diamond']['tsdbhandler']["timeout"] %>
 # Uncomment and set to hardcode a hostname for the collector path
 # Keep in mind, periods are seperators in graphite
 # hostname = my_custom_hostname
-<% if node['diamond']['collectors']["hostname"].length > 2 %>
+<% if node['diamond']['collectors']["hostname"] %>
 hostname = <%= node['diamond']['collectors']["hostname"] %>
 <% end %>
 # If you perfer to just use a different way of calculating the hostname
 # Uncomment and set this to one of these values:
-# fqdn_short  = Default. Similar to hostname -s
-# fqdn        = hostname output
-# fqdn_rev    = hostname in reverse (com.example.www)
-# uname_short = Similar to uname -n, but only the first part
-# uname_rev   = uname -r in reverse (com.example.www)
+
+# smart             = Default. Tries fqdn_short. If that's localhost, uses hostname_short
+
+# fqdn_short        = Default. Similar to hostname -s
+# fqdn              = hostname output
+# fqdn_rev          = hostname in reverse (com.example.www)
+
+# uname_short       = Similar to uname -n, but only the first part
+# uname_rev         = uname -r in reverse (com.example.www)
+
+# hostname_short    = `hostname -s`
+# hostname          = `hostname`
+# hostname_rev      = `hostname` in reverse (com.example.www)
+
 hostname_method = <%= node['diamond']['collectors']["hostname_method"] %>
 
 # Path Prefix and Suffix
@@ -126,10 +146,10 @@ hostname_method = <%= node['diamond']['collectors']["hostname_method"] %>
 # such as: %(path_prefix)s.$(hostname)s.$(path_suffix)s.$(metric)s
 # path_prefix = servers
 # path_suffix =
-<% if node['diamond']['collectors']["path_prefix"].length > 2 %>
+<% if node['diamond']['collectors']["path_prefix"] %>
 path_prefix = <%= node['diamond']['collectors']["path_prefix"] %>
 <% end %>
-<% if node['diamond']['collectors']["path_suffix"].length > 2 %>
+<% if node['diamond']['collectors']["path_suffix"] %>
 path_suffix = <%= node['diamond']['collectors']["path_suffix"] %>
 <% end %>
 
@@ -158,6 +178,7 @@ keys = default
 # to increase verbosity, set DEBUG
 level = INFO
 handlers = rotated_file
+propagate = 1
 
 [handler_rotated_file]
 
@@ -165,7 +186,7 @@ class = handlers.TimedRotatingFileHandler
 level = DEBUG
 formatter = default
 # rotate at midnight, each day and keep 7 days
-args = (<%= node['diamond']['archive_handler']["log_file"] %>, 'midnight', 1, 7)
+args = ('<%= node['diamond']['archive_handler']["log_file"] %>', 'midnight', 1, 7)
 
 [formatter_default]
 
