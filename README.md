@@ -18,7 +18,6 @@ Attributes
 * `default[:diamond][:package_version]` - Package version of Diamond (i.e. Diamond 3.2 is diamond\_3.2.0\_all.deb)
 * `default[:diamond][:installation_type]` - :deb, :apt or :rpm -- :deb builds a dpkg from the Brightcove git repository.
 * `default['diamond']['diamond_configuration_path']` - Location of diamond.conf
-* `default['diamond']['diamond_installation_path']` - Root install location (i.e. /usr)
 * `default['diamond']['diamond_handlers']` = Default diamond handlers
 * `default['diamond']['diamond_user']` - User to run diamond as
 * `default['diamond']['diamond_group']` - Group to run diamond as
