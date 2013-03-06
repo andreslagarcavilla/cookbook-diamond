@@ -30,3 +30,15 @@ end
 node['diamond']['add_collectors'].each do |c|
   include_recipe "diamond::#{c}"
 end
+
+# Make sure the pid dir is there.
+# /run is mounted tmpfs on ubuntu
+# so we can lose it on a reboot.
+if not ::File.exists?("/run/diamond")
+  directory "/run/diamond" do
+    owner "diamond"
+    group "root"
+    mode 00755
+    action :create
+  end
+end
