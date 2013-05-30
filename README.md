@@ -91,3 +91,11 @@ It is recommended that you create a recipe per collector, and add that recipe to
 When passing sensitive data to a diamond collector config (ie a username, password, etc), use data bags 
 to encrypt the values.
 
+Testing
+=======
+
+    $ bundle install
+    $ bundle exec berks install
+    $ bundle exec strainer test
+
+
