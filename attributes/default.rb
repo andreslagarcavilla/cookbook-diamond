@@ -1,7 +1,7 @@
 case node['platform']
   when "ubuntu", "debian"
-    default['diamond']['version'] = '3.3'
-    default['diamond']['package_version'] = '3.3.0'
+    default['diamond']['version'] = '3.3.396'
+    default['diamond']['package_version'] = '3.3.396'
     default['diamond']['install_type'] = :deb
   else
     default['diamond']['version'] = '3.3'
@@ -9,6 +9,7 @@ case node['platform']
     default['diamond']['install_type'] = :rpm
 end
 
+default['diamond']['git_reference'] = "7ebed799d627b4569a1f447268983528a64abc2f"
 default['diamond']['cookbook'] = "diamond"
 default['diamond']['diamond_configuration_path'] = "/etc/diamond"
 default['diamond']['diamond_handlers'] = "diamond.handler.archive.ArchiveHandler, diamond.handler.graphitepickle.GraphitePickleHandler"
@@ -28,4 +29,4 @@ default['diamond']['mysqlhandler'] = { "host" => "127.0.0.1", "port" => 3306, "u
 default['diamond']['collectors'] = { "hostname_method" => "smart", "hostname" => nil, "path_prefix" => nil, "path_suffix" => nil, "interval" => 300 }
 
 default['diamond']['force_install'] = false
-default['diamond']['add_collectors'] = ['cpu', 'diskspace', 'diskusage', 'loadavg', 'memory', 'sockstat', 'vmstat']
+default['diamond']['add_collectors'] = ['cpu', 'diskspace', 'diskusage', 'loadavg', 'memory', 'sockstat', 'vmstat', 'libvirtkvm', 'vms']

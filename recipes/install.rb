@@ -41,7 +41,10 @@ case node['diamond']['install_type']
       end
 
       if node['diamond']['version'] != 'master' then
+        # If version has a micro it refers to a specific git reference rather than a tag
+        if node['diamond']['version'].split(".").length() <= 2 or node['diamond']['git_reference'].nil?
             node.override['diamond']['git_reference'] = "v#{node['diamond']['version']}"
+        end
       else
             node.override['diamond']['git_reference'] = node['diamond']['version']
       end
